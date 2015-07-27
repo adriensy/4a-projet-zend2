@@ -23,11 +23,10 @@ class PaysTable
      * Méthode get : récupère un ou plusieurs pays
      * 
      * @param string $code
-     * @param string $fieldsString
      * @return array
      * @throws \Exception
      */
-    public function getPays($code = "", $fieldsString = "", $returnObject = false)
+    public function getPays($code = "", $returnObject = false)
     {
         $select = new Select();
         $where = null;
@@ -40,18 +39,6 @@ class PaysTable
                 $where = $this->constructWhereFromCode($code);
 
                 $select->where($where);
-
-                if ($fieldsString) {
-                    $columns = [];
-
-                    $fieldsArray = explode(",", $fieldsString);
-
-                    foreach($fieldsArray as $columnBdd) {
-                        $columns[] = $columnBdd;
-                    }
-
-                    $select->columns($columns);
-                }
             }
             
             $rowset = $this->tableGateway->selectWith($select);
@@ -86,7 +73,7 @@ class PaysTable
     public function getPaysAdmin($code = "")
     {
         if ($code) {
-            return $this->getPays($code, "", true);
+            return $this->getPays($code, true);
         }
         
         return $this->getPays();
@@ -139,13 +126,12 @@ class PaysTable
      * Méthode get : retourne au format XML
      * 
      * @param type $code
-     * @param type $fieldsString
      * @return type
      */
-    public function getPaysXml($code = "", $fieldsString = "")
+    public function getPaysXml($code = "")
     {
         $paysXml = new \SimpleXMLElement("<?xml version=\"1.0\"?><pays></pays>");
-        $paysListe = $this->getPays($code, $fieldsString);
+        $paysListe = $this->getPays($code);
         
         foreach($paysListe as $id => $pays) {
             if (is_string($pays)) {
